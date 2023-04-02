@@ -14,5 +14,5 @@ class Track(DataClassDictMixin):
 
     id: str
     name: str
-    popularity: str
+    popularity: int
     uri: str
