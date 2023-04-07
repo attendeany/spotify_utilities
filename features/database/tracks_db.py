@@ -97,3 +97,7 @@ class TracksDatabase(SpotifyDatabase):
             "REPLACE INTO saved_tracks (id, added_at, added_at_timestamp) VALUES (?, ?, ?)",
             (saved_track.track.id, str(saved_track.added_at), int(saved_track.added_at.timestamp())))
         self.db.commit()
+
+    def artist_ids_without_info(self):
+        data = self.db.execute("SELECT id FROM artists WHERE popularity IS NULL").fetchall()
+        return [i[0] for i in data]

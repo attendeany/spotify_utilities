@@ -15,6 +15,10 @@ class TracksFeaturesDatabase(TracksDatabase):
         data = self.db.execute("SELECT * FROM track_features WHERE id=?", (track_id,)).fetchone()
         return TrackFeatures.from_dict(data)
 
+    def track_ids_without_features(self):
+        data = self.db.execute("SELECT id FROM features_summary WHERE tempo IS NULL").fetchall()
+        return [i[0] for i in data]
+
     @classmethod
     @cache
     def _insert_query(cls):
@@ -44,6 +48,6 @@ class TracksFeaturesDatabase(TracksDatabase):
             """
             CREATE VIEW IF NOT EXISTS features_summary AS 
             SELECT * FROM track_summary 
-            INNER JOIN track_features on track_summary.id = track_features.id
+            LEFT JOIN track_features on track_summary.id = track_features.id
             """
         )
