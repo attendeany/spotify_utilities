@@ -33,13 +33,33 @@ class TracksDatabase(SpotifyDatabase):
             "genres TEXT"
             ")"
         )
+        self.db.execute(
+            """
+            CREATE VIEW IF NOT EXISTS track_summary AS 
+            SELECT
+                artists.name as artist,
+                tracks.name,
+                tracks.popularity,
+                artists.genres,
+                duration_ms,
+                explicit,
+                added_at,
+                added_at_timestamp,
+                tracks.uri,
+                tracks.id
+            FROM tracks 
+            INNER JOIN saved_tracks st on tracks.id = st.id 
+            INNER JOIN artists on ltrim(tracks.artists, ',') = artists.id
+            """
+        )
 
     def add_artist(self, artist: Artist):
         artist_dict = artist.to_dict()
         artist_dict['genres'] = ','.join(artist.genres)
         self.db.execute(
             "INSERT INTO artists (id, name, uri, popularity, genres) "
-            "VALUES (:id, :name, :uri, :popularity, :genres) ON CONFLICT DO NOTHING", artist_dict)
+            "VALUES (:id, :name, :uri, :popularity, :genres) "
+            "ON CONFLICT DO UPDATE SET popularity=:popularity, genres=:genres", artist_dict)
         self.db.commit()
 
     def get_artist(self, artist_id: str):

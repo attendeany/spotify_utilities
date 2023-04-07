@@ -40,3 +40,10 @@ class TracksFeaturesDatabase(TracksDatabase):
             ")"
         )
         self.db.execute(query)
+        self.db.execute(
+            """
+            CREATE VIEW IF NOT EXISTS features_summary AS 
+            SELECT * FROM track_summary 
+            INNER JOIN track_features on track_summary.id = track_features.id
+            """
+        )
