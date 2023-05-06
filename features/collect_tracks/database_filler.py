@@ -29,7 +29,7 @@ def fill_artists_info():
         artists = spotify.artists(chunk)['artists']
         for art in artists:
             artist = Artist.from_dict(art)
-            database.add_artist(artist)
+            database.add_artist(artist, update_on_conflict=True)
     return len(artist_ids)
 
 
@@ -51,8 +51,8 @@ def fill_saved_tracks():
 
         for item in saved_tracks['items']:
             track = SavedTrack.from_dict(item)
+            if latest_date and (track.added_at <= latest_date):
+                return added_count
             database.add_saved_track(track)
             added_count += 1
-            if latest_date and (track.added_at < latest_date):
-                return added_count
     return added_count

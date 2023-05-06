@@ -53,13 +53,14 @@ class TracksDatabase(SpotifyDatabase):
             """
         )
 
-    def add_artist(self, artist: Artist):
+    def add_artist(self, artist: Artist, *, update_on_conflict=False):
         artist_dict = artist.to_dict()
         artist_dict['genres'] = ','.join(artist.genres)
+        on_conflict = "UPDATE SET popularity=:popularity, genres=:genres" if update_on_conflict else 'NOTHING'
         self.db.execute(
             "INSERT INTO artists (id, name, uri, popularity, genres) "
             "VALUES (:id, :name, :uri, :popularity, :genres) "
-            "ON CONFLICT DO UPDATE SET popularity=:popularity, genres=:genres", artist_dict)
+            f"ON CONFLICT DO {on_conflict}", artist_dict)
         self.db.commit()
 
     def get_artist(self, artist_id: str):
