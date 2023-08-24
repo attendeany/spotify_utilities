@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from mashumaro import DataClassDictMixin
 
 
+# noinspection SpellCheckingInspection
 @dataclass
 class TrackFeatures(DataClassDictMixin):
     """https://developer.spotify.com/documentation/web-api/reference/get-audio-features"""
