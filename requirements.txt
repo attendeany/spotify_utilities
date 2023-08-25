@@ -1,3 +1,4 @@
-spotipy~=2.22.1
+spotipy~=2.23.0
 mashumaro~=3.5
 ciso8601~=2.3.0
+tqdm~=4.66.1

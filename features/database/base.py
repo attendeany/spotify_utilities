@@ -4,8 +4,11 @@ from cosntants.paths import Paths
 
 
 class SpotifyDatabase:
-    def __init__(self):
-        self.db = sqlite3.connect(Paths.LOCAL_DATABASE)
+    database_file = Paths.LOCAL_DATABASE
+    db: sqlite3.Connection
+
+    def connect(self):
+        self.db = sqlite3.connect(self.database_file)
         self.db.row_factory = sqlite3.Row
         self.db.execute("PRAGMA foreign_keys = ON")
         self._init_tables()
@@ -13,5 +16,9 @@ class SpotifyDatabase:
     def _init_tables(self):
         pass
 
-    def __del__(self):
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self.db.close()
